@@ -1,60 +1,98 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
+    <app-inbox></app-inbox>
   </div>
 </template>
 
 <script>
+import Inbox from './Inbox.vue'
 export default {
-  name: 'app',
-  data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
-    }
+  components: {
+    Inbox
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.message {
+  margin-left: 0px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #efefef;
 }
 
-h1, h2 {
-  font-weight: normal;
+.message a {
+  color: black;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+.message a:hover, .message a:active, .message a:focus {
+  text-decoration: none;
 }
 
-li {
-  display: inline-block;
-  margin: 0 10px;
+.message + .message {
+  border-top: 1px solid #efefef;
 }
 
-a {
-  color: #42b983;
+.message.read {
+  background: #efefef;
+}
+
+.message.unread {
+  font-weight: bold;
+}
+
+.message.selected {
+  background: #ffffcc;
+}
+
+.message:hover {
+  margin-left: -3px;
+  border-left: 3px solid #ccc;
+}
+
+.message-body {
+  background: #ccc;
+  margin-left: 0;
+  margin-bottom: 1em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+.toolbar {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.toolbar .label-select {
+  width: auto;
+  display: inline;
+}
+
+.toolbar select,
+.toolbar button,
+.toolbar a,
+.toolbar .badge {
+  margin-right: .5em;
+  margin-bottom: .5em;
+}
+
+footer.spacer {
+  margin-bottom: 20em;
+}
+
+.label {
+  margin-right: .5em;
+}
+
+.fa-close {
+  cursor: pointer;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0
 }
 </style>
