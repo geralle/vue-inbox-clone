@@ -14,7 +14,6 @@ import Messages from './Messages.vue'
 import axios from 'axios';
 
 export default {
-
   components: {
     'app-toolbar': Toolbar,
     'app-messages': Messages,
@@ -25,27 +24,50 @@ export default {
       emails: [],
       compose: false,
       show: true,
+      change: false,
       // url: "http://localhost:8082/api/messages"
       url: "https://geralle-inbox.herokuapp.com/api/messages"
     }
   },
+  watch:{
+    change: function(){
+      this.getEmails()
+      this.change = false
+    }
+  },
   mounted(){
-    axios.get(this.url)
-    .then(response => {
-      var emails = response.data._embedded.messages
-      for(var i=0; i < emails.length; i++){
-        emails[i]['selected'] = false
-      }
-      this.emails = response.data._embedded.messages
-    })
+    this.getEmails()
   },
   methods:{
+    getEmails: function(){
+      axios.get(this.url)
+      .then(response => {
+        var emails = response.data._embedded.messages
+        for(var i=0; i < emails.length; i++){
+          emails[i]['selected'] = false
+        }
+        this.emails = response.data._embedded.messages
+      })
+    },
     toggleStar: function(email){
+      let starLocation = email.id
+      let starEmail = false
       if(email.starred === true){
-        email.starred = false
+        starEmail = false
       }else if(email.starred === false){
-        email.starred = true
+        starEmail = true
       }
+
+      let payload = {
+        "messageIds": [starLocation],
+        "command": "star",
+        "star": starEmail
+      }
+
+      axios.patch(this.url, payload)
+      .then(response =>{
+        this.change = true
+      })
     },
     selections: function(data){
       var selected = []
@@ -90,11 +112,19 @@ export default {
     },
     markRead: function(data){
       var selectedRead = this.selections(data)
+      var readPayload = []
       for(var i=0;i<selectedRead.length;i++){
-        if(selectedRead[i].read === false){
-          selectedRead[i].read = true
-        }
+        readPayload.push(selectedRead[i].id)
       }
+      var payload = {
+        "messageIds": readPayload,
+        "command": "read",
+        "read": true
+      }
+      axios.patch(this.url, payload)
+      .then(response =>{
+        this.change = true
+      })
     },
     findIndex: function(data, position, selectedDataArr){
       var index = 0
