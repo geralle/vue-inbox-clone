@@ -1,3 +1,6 @@
+server: https://geralle-inbox.herokuapp.com/api/messages
+client: https://inbox-geralle.firebaseapp.com/
+
 # vue-inbox-clone
 
 > A Vue.js project
