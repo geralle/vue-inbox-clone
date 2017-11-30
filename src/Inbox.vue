@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
     <app-compose v-if="this.compose === true" v-bind:compose="compose" v-bind:postData="postData"></app-compose>
-    <app-toolbar v-bind:emails="emails" v-bind:selections="selections" v-bind:unredMsg="unredMsg" v-bind:markUnread="markUnread" v-bind:markRead="markRead" v-bind:selectBox="selectBox" v-bind:selectAll="selectAll" v-bind:deleteEmail="deleteEmail" v-bind:findIndex="findIndex" v-bind:removeSelectAll="removeSelectAll" v-bind:applyLabels="applyLabels" v-bind:removeLabel="removeLabel" v-bind:toggleCompose="toggleCompose" v-bind:compose="compose" ></app-toolbar>
+    <app-toolbar v-bind:emails="emails" v-bind:selections="selections" v-bind:unredMsg="unredMsg" v-bind:markUnread="markUnread" v-bind:markRead="markRead" v-bind:selectBox="selectBox" v-bind:selectAll="selectAll" v-bind:deleteEmail="deleteEmail" v-bind:findIndex="findIndex" v-bind:removeSelectAll="removeSelectAll" v-bind:applyLabels="applyLabels" v-bind:removeLabel="removeLabel" v-bind:toggleCompose="toggleCompose" v-bind:compose="compose"></app-toolbar>
     <app-messages v-bind:emails="emails" v-bind:toggleStar="toggleStar" ></app-messages>
   </div>
 </template>
@@ -78,13 +78,25 @@ export default {
       }
       return selected
     },
+    selectedPayload: function(data){
+      var selectedArr = []
+      for(var i=0;i < data.length; i++){
+        selectedArr.push(data[i].id)
+      }
+      return selectedArr
+    },
     deleteEmail: function(data){
       var selectedDataArr = this.selections(data)
-      var selectedIndex = 0
-      for(var i=0; i<selectedDataArr.length; i++){
-        selectedIndex = this.findIndex(data, i, selectedDataArr)
-        data.splice(selectedIndex, 1)
+      let selected = this.selectedPayload(selectedDataArr)
+      let payload = {
+        "messageIds": selected,
+        "command": "delete"
       }
+
+      axios.patch(this.url, payload)
+      .then(response =>{
+        this.change = true
+      })
     },
     selectAll: function(){
       for(var i=0;i<this.emails.length;i++){
@@ -103,21 +115,23 @@ export default {
       }
     },
     markUnread: function(data){
-      var selectedUnread = this.selections(data)
-      for(var i=0;i<selectedUnread.length;i++){
-        if(selectedUnread[i].read === true){
-          selectedUnread[i].read = false
-        }
+      let selectedUnread = this.selections(data)
+      let selected = this.selectedPayload(selectedUnread)
+      let payload = {
+        "messageIds": selected,
+        "command": "read",
+        "read": false
       }
+      axios.patch(this.url, payload)
+      .then(response =>{
+        this.change = true
+      })
     },
     markRead: function(data){
-      var selectedRead = this.selections(data)
-      var readPayload = []
-      for(var i=0;i<selectedRead.length;i++){
-        readPayload.push(selectedRead[i].id)
-      }
-      var payload = {
-        "messageIds": readPayload,
+      let selectedRead = this.selections(data)
+      let selected = this.selectedPayload(selectedDataArr)
+      let payload = {
+        "messageIds": selected,
         "command": "read",
         "read": true
       }
@@ -136,38 +150,39 @@ export default {
       return index
     },
     applyLabels: function(data){
-      var selectedDataArr = this.selections(data)
-      var selectedLabel = event.target.value
-      var selectedIndex = 0
-      for(var i=0; i<selectedDataArr.length; i++){
-        selectedIndex = this.findIndex(data, i, selectedDataArr)
-        var labelArr = data[selectedIndex].labels
-        if(labelArr.length === 0){
-          labelArr.push(selectedLabel)
-        }else if(labelArr.length > 0){
-          if(!labelArr.includes(selectedLabel)){
-            labelArr.push(selectedLabel)
-          }
-        }
+      let selectedDataArr = this.selections(data)
+      let selectedLabel = event.target.value
+      let selected = this.selectedPayload(selectedDataArr)
+      let payload = {
+        "messageIds": selected,
+        "command": "addLabel",
+        "label": selectedLabel
+      }
+      if(selectedLabel != "Apply label"){
+        axios.patch(this.url, payload)
+        .then(response =>{
+          this.change = true
+        })
       }
     },
     removeLabel: function(data){
-      var selectedDataArr = this.selections(data)
-      var selectedLabel = event.target.value
-      var selectedIndex = 0
-      for(var i=0; i<selectedDataArr.length; i++){
-        selectedIndex = this.findIndex(data, i, selectedDataArr)
-        var labelArr = selectedDataArr[i].labels
-        var selectedLabelIndex = labelArr.indexOf(selectedLabel)
-        for(var x=0; x<labelArr.length; x++){
-          if(selectedLabel === labelArr[x]){
-            labelArr.splice(selectedLabelIndex, 1)
-          }
-        }
+      let selectedDataArr = this.selections(data)
+      let selectedLabel = event.target.value
+      let selected = this.selectedPayload(selectedDataArr)
+      let payload = {
+        "messageIds": selected,
+        "command": "removeLabel",
+        "label": selectedLabel
+      }
+      if(selectedLabel != "Remove label"){
+        axios.patch(this.url, payload)
+        .then(response =>{
+          this.change = true
+        })
       }
     },
     toggleCompose: function(){
-      var newCompose = this.compose
+      let newCompose = this.compose
       if(newCompose == true){
         newCompose = false
       }else{
@@ -177,11 +192,16 @@ export default {
     },
     postData: function(event){
       event.preventDefault()
-      var subject = event.path[3]["0"].value
-      var body = event.path[3]["1"].value
-      console.log(subject)
-      console.log(body)
-      console.log(event)
+      let subject = event.path[3]["0"].value
+      let body = event.path[3]["1"].value
+      let payload = {
+        "subject": subject,
+        "body": body
+      }
+      axios.post(this.url, payload)
+      .then(response =>{
+        this.change = true
+      })
     }
   },
   computed:{

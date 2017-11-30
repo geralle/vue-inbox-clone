@@ -19,9 +19,9 @@
       <i v-if="selectBox === 'none'" class="fa fa-square-o"></i>
     </button>
 
-    <button class="btn btn-default" v-on:click="markRead(emails)">Mark As Read</button>
+    <button class="btn btn-default mark-read" v-on:click="markRead(emails)">Mark As Read</button>
 
-    <button class="btn btn-default" v-on:click="markUnread(emails)">Mark As Unread</button>
+    <button class="btn btn-default mark-unread" v-on:click="markUnread(emails)">Mark As Unread</button>
 
     <select class="form-control label-select" v-on:change="applyLabels(emails)">
       <option>Apply label</option>
