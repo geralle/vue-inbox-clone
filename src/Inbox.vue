@@ -129,7 +129,7 @@ export default {
     },
     markRead: function(data){
       let selectedRead = this.selections(data)
-      let selected = this.selectedPayload(selectedDataArr)
+      let selected = this.selectedPayload(selectedRead)
       let payload = {
         "messageIds": selected,
         "command": "read",
