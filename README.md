@@ -1,5 +1,5 @@
 * server: https://geralle-inbox.herokuapp.com/api/messages
-* client: https://inbox-geralle.firebaseapp.com/
+* client: https://geralle-inbox-client.firebaseapp.com/
 
 # vue-inbox-clone
 
