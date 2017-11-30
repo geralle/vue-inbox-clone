@@ -19,7 +19,7 @@
     </div>
     <div class="form-group">
       <div class="col-sm-8 col-sm-offset-2">
-        <input v-on:click="postData" type="submit" value="Send" class="btn btn-primary">
+        <input v-on:click="postEmail" type="submit" value="Send" class="btn btn-primary">
       </div>
     </div>
   </form>
@@ -29,7 +29,7 @@
 export default {
   props:[
     'toggleCompose',
-    'postData'
+    'postEmail'
   ]
 }
 </script>

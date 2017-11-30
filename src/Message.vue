@@ -19,7 +19,7 @@
     </div>
     <div class="col-xs-11">
       <span v-for="label in email.labels" class="label label-warning">{{label}}</span>
-      <a href="#">
+      <a>
         {{email.subject}}
       </a>
     </div>

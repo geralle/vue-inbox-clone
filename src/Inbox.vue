@@ -1,6 +1,8 @@
 <template lang="html">
   <div>
-    <app-compose v-if="this.compose === true" v-bind:compose="compose" v-bind:postData="postData"></app-compose>
+    <transition name="fade">
+      <app-compose v-if="this.compose === true" v-bind:compose="compose" v-bind:postEmail="postEmail"></app-compose>
+    </transition>
     <app-toolbar v-bind:emails="emails" v-bind:selections="selections" v-bind:unredMsg="unredMsg" v-bind:markUnread="markUnread" v-bind:markRead="markRead" v-bind:selectBox="selectBox" v-bind:selectAll="selectAll" v-bind:deleteEmail="deleteEmail" v-bind:findIndex="findIndex" v-bind:removeSelectAll="removeSelectAll" v-bind:applyLabels="applyLabels" v-bind:removeLabel="removeLabel" v-bind:toggleCompose="toggleCompose" v-bind:compose="compose"></app-toolbar>
     <app-messages v-bind:emails="emails" v-bind:toggleStar="toggleStar" ></app-messages>
   </div>
@@ -190,7 +192,7 @@ export default {
       }
       this.compose = newCompose
     },
-    postData: function(event){
+    postEmail: function(event){
       event.preventDefault()
       let subject = event.path[3]["0"].value
       let body = event.path[3]["1"].value
@@ -201,6 +203,7 @@ export default {
       axios.post(this.url, payload)
       .then(response =>{
         this.change = true
+        this.compose = false
       })
     }
   },
